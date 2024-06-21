@@ -1,0 +1,221 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:receptionist/constants/colors.dart';
+import 'package:receptionist/constants/doctor_list.dart';
+import 'package:receptionist/screens/create_appointment_screen.dart';
+import 'package:receptionist/screens/doctors_patients_screen.dart';
+import 'package:receptionist/screens/manage_bills_screen.dart';
+import 'package:receptionist/widgets/customWidgets.dart';
+import 'package:receptionist/widgets/homeContainerWidget.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  
+  int carouselIndex = 0;
+  @override
+
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MyColors.Seashell,
+        body: SingleChildScrollView(
+          physics: PageScrollPhysics(),
+          child: Column(
+            children: [
+              const MyAppBar(title: "Home"),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  runAlignment: WrapAlignment.center,
+                  children: [
+                    RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                            style: GoogleFonts.aBeeZee(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: MyColors.DarkSienna,
+                            ),
+                            children: [
+                              const TextSpan(text: "Hi, "),
+                              TextSpan(
+                                text: "Receptionist's Name",
+                                style: GoogleFonts.aBeeZee(
+                                  color: MyColors.Indigo,
+                                ),
+                              ),
+                              const TextSpan(text: "!")
+                            ])),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: MyColors.Navy,
+                      ),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Get Started",
+                    style: GoogleFonts.josefinSans(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: MyColors.Gold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Card(
+                  elevation: 20,
+                  color: MyColors.FadedBlue,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            HomeContainer(
+                              title: "Create\nAppointments",
+                              icon: "appointment",
+                              page: CreateAppointmentScreen(),
+                              color: MyColors.Navy,
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            HomeContainer(
+                              title: "Manage\nBills",
+                              icon: "bill",
+                              page: ManageBillsScreen(),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 15,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            HomeContainer(
+                                title: "Doctor's\nPatients",
+                                icon: "list",
+                                page: DoctorsPatientsScreen())
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: MyColors.Rosewood,
+                      ),
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    "Doctors",
+                    style: GoogleFonts.josefinSans(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: MyColors.Gold,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20,),
+              CarouselSlider(
+                items: DoctorList.doctors.map((e)=>
+                  Ink(
+                    width: 200,
+                    decoration: BoxDecoration(
+                      color: MyColors.FadedBlue,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: (){},
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: Image.asset(e.image,
+                              ),
+                            ),
+                            SizedBox(height: 10,),
+                            Text(e.name,
+                            style: GoogleFonts.aBeeZee(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: MyColors.DarkSienna,
+                            ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ).toList(),
+                options: CarouselOptions(
+                  aspectRatio: 1.628,
+                  viewportFraction: 0.5,
+                  enlargeCenterPage: true,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      carouselIndex = index;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(height: 20,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for(int i = 0; i < DoctorList.doctors.length;i++)
+                    Container(
+                      margin: EdgeInsets.all(5),
+                      height: i == carouselIndex ? 10 : 7, 
+                      width: i == carouselIndex ? 10 :7,
+                      decoration: BoxDecoration(
+                        color: i == carouselIndex ? MyColors.Rosewood:MyColors.Red ,
+                        shape: BoxShape.circle,
+                      ),
+              
+                    )
+                ],
+              ),
+              const SizedBox(height: 20,),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
