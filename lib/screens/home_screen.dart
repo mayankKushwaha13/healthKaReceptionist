@@ -4,8 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:receptionist/constants/colors.dart';
 import 'package:receptionist/constants/doctor_list.dart';
 import 'package:receptionist/screens/create_appointment_screen.dart';
+import 'package:receptionist/screens/doctor_list_screen.dart';
 import 'package:receptionist/screens/doctors_patients_screen.dart';
 import 'package:receptionist/screens/manage_bills_screen.dart';
+import 'package:receptionist/widgets/appDrawerWidget.dart';
 import 'package:receptionist/widgets/customWidgets.dart';
 import 'package:receptionist/widgets/homeContainerWidget.dart';
 
@@ -24,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: AppDrawer(),
         backgroundColor: MyColors.Seashell,
         body: SingleChildScrollView(
           physics: PageScrollPhysics(),
@@ -120,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             HomeContainer(
                                 title: "Doctor's\nPatients",
                                 icon: "list",
-                                page: DoctorsPatientsScreen())
+                                page: DoctorsListPage())
                           ],
                         )
                       ],
@@ -150,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SizedBox(height: 20,),
               CarouselSlider(
-                items: DoctorList.doctors.map((e)=>
+                items: doctors.map((e)=>
                   Ink(
                     width: 200,
                     decoration: BoxDecoration(
@@ -159,7 +162,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      onTap: (){},
+                      onTap: (){
+
+                      },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                         child: Column(
@@ -170,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             SizedBox(height: 10,),
-                            Text(e.name,
+                            Text(e.firstName,
                             style: GoogleFonts.aBeeZee(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -198,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for(int i = 0; i < DoctorList.doctors.length;i++)
+                  for(int i = 0; i < doctors.length;i++)
                     Container(
                       margin: EdgeInsets.all(5),
                       height: i == carouselIndex ? 10 : 7, 

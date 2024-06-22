@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receptionist/constants/colors.dart';
+import 'package:receptionist/constants/doctor_list.dart';
 import 'package:receptionist/screens/billing_screen.dart';
+import 'package:receptionist/widgets/assignTextFieldNumberWidget.dart';
 import 'package:receptionist/widgets/assignTextFieldWidget.dart';
 import 'package:receptionist/widgets/customWidgets.dart';
 
@@ -10,10 +12,14 @@ class CreateAppointmentScreen extends StatefulWidget {
   const CreateAppointmentScreen({super.key});
 
   @override
-  State<CreateAppointmentScreen> createState() => _CreateAppointmentScreenState();
+  State<CreateAppointmentScreen> createState() =>
+      _CreateAppointmentScreenState();
 }
 
 class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _formKey2 = GlobalKey<FormState>();
+  String? selectDoctor;
   final patName = TextEditingController();
 
   final phNum = TextEditingController();
@@ -39,7 +45,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
         body: SingleChildScrollView(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: (){
+            onTap: () {
               setState(() {
                 FocusScope.of(context).requestFocus(new FocusNode());
               });
@@ -48,7 +54,9 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MyAppBar(title: "Create Appointments"),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -72,24 +80,44 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                 const SizedBox(
                   height: 30,
                 ),
-                AssignTextField(
-                  controller: patName,
-                  title: "Patient's Name",
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                AssignTextField(controller: phNum, title: "Phone No. "),
-                const SizedBox(
-                  height: 20,
-                ),
-                AssignTextField(controller: patID, title: "Patient's ID"),
-                const SizedBox(
-                  height: 20,
-                ),
-                AssignTextField(controller: age, title: "Patient's Age"),
-                const SizedBox(
-                  height: 20,
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      AssignTextField(
+                        controller: patID,
+                        title: "Patient's ID",
+                        lookingFor: "ID",
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      AssignTextField(
+                        controller: patName,
+                        title: "Patient's Name",
+                        lookingFor: "Name",
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      AssignTextField2(
+                        controller: phNum,
+                        title: "Phone No. ",
+                        lookingFor: "Phone",
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      AssignTextField(
+                        controller: age,
+                        title: "Patient's Age",
+                        lookingFor: "Age",
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -107,7 +135,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: DropdownButton(
-                          iconEnabledColor: MyColors.Peach,
+                            iconEnabledColor: MyColors.Peach,
                             underline: Container(
                               color: MyColors.Rosewood,
                               height: 2,
@@ -181,8 +209,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    children: [
+                  child: Row(children: [
                     Text(
                       "Appointment Time : ",
                       style: GoogleFonts.aBeeZee(
@@ -237,64 +264,123 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                    Text(
-                      "Appointment Date : ",
-                      style: GoogleFonts.aBeeZee(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(width: 50,),
-                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                              color: MyColors.Pink,
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Text(
-                            "${selecteddate.day}/${selecteddate.month}/${selecteddate.year}",
-                            style: GoogleFonts.aBeeZee(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
+                        Text(
+                          "Appointment Date : ",
+                          style: GoogleFonts.aBeeZee(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 10,),
-                        Ink(
-                          decoration: BoxDecoration(
-                            color: MyColors.Rosewood,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: InkWell(
-                            onTap: () async {
-                              final DateTime? dateTime = await showDatePicker(
-                                  context: context,
-                                  initialDate: selecteddate,
-                                  firstDate: DateTime(2024),
-                                  lastDate: DateTime(3000));
-                              if (dateTime != null) {
-                                setState(() {
-                                  selecteddate = dateTime;
-                                });
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                        SizedBox(
+                          width: 50,
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                  color: MyColors.Pink,
+                                  borderRadius: BorderRadius.circular(12)),
                               child: Text(
-                                "Pick Date",
+                                "${selecteddate.day}/${selecteddate.month}/${selecteddate.year}",
                                 style: GoogleFonts.aBeeZee(
-                                    color: MyColors.white, fontSize: 18),
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             ),
-                          ),
-                        ),
-                      ],
-                    )
-                  ]),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Ink(
+                              decoration: BoxDecoration(
+                                color: MyColors.Rosewood,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: InkWell(
+                                onTap: () async {
+                                  final DateTime? dateTime =
+                                      await showDatePicker(
+                                          context: context,
+                                          initialDate: selecteddate,
+                                          firstDate: DateTime(2024),
+                                          lastDate: DateTime(3000));
+                                  if (dateTime != null) {
+                                    setState(() {
+                                      selecteddate = dateTime;
+                                    });
+                                  }
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Pick Date",
+                                    style: GoogleFonts.aBeeZee(
+                                        color: MyColors.white, fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ]),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                AssignTextField(controller: docID, title: "Doctor ID"),
+                Form(
+                  key: _formKey2,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: ButtonTheme(
+                      alignedDropdown: true,
+                      child: DropdownButtonFormField<String>(
+                          isDense: true,
+                          isExpanded: true,
+                          style: GoogleFonts.roboto(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          dropdownColor: MyColors.Rosewood,
+                          iconEnabledColor: MyColors.white,
+                          hint: Text(
+                            "Select Doctor",
+                            style: GoogleFonts.lato(color: MyColors.white),
+                          ),
+                          value: selectDoctor,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select the doctor';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              fillColor: MyColors.Rosewood,
+                              filled: true,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              )),
+                          items: doctors
+                              .map((e) => DropdownMenuItem<String>(
+                                    child: Wrap(
+                                      alignment: WrapAlignment.spaceBetween,
+                                      runAlignment: WrapAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(width: double.infinity,),
+                                        Text("${e.firstName} ${e.lastName}"),
+                                        Text("${e.doctorId}"),
+                                      ],
+                                    ),
+                                    value: e.doctorId,
+                                  ))
+                              .toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectDoctor = newValue!;
+                            });
+                          }),
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   height: 30,
                 ),
@@ -335,7 +421,20 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                       ),
                       child: InkWell(
                         onTap: () {
-                          Get.to(()=>BillingScreen(),transition: Transition.rightToLeft);
+                          if (_formKey.currentState!.validate() &&
+                              _formKey2.currentState!.validate()) {
+                            Get.to(
+                                () => BillingScreen(
+                                      patName: patName.text,
+                                      patAge: age.text,
+                                      patPhone: phNum.text,
+                                      patGender: genderDropDown,
+                                      date: "${selecteddate.day}/${selecteddate.month}/${selecteddate.year}",
+                                      time: "${selectedtime.hour}:${selectedtime.minute}",
+                                      docID: selectDoctor!,
+                                    ),
+                                transition: Transition.rightToLeft);
+                          }
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
@@ -354,7 +453,9 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
               ],
             ),
           ),

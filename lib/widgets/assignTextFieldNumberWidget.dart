@@ -1,12 +1,14 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receptionist/constants/colors.dart';
 import 'package:receptionist/constants/patient_list.dart';
 
-class AssignTextField extends StatelessWidget {
-  const AssignTextField({
+class AssignTextField2 extends StatelessWidget {
+  const AssignTextField2({
     super.key,
     required this.controller,
     required this.title,
@@ -44,20 +46,15 @@ class AssignTextField extends StatelessWidget {
               },
               suggestionsCallback: (search) {
                 return patients.where((element){
-                  if (lookingFor == "Name")
-                  {
-                    return element.name.contains(search);
-                  }
-                  else if ( lookingFor == "ID")
-                  {
-                    return element.id.contains(search);
-                  }
-                  else 
                   return element.phoneNumber.contains(search);
                 }).toList();
               },
               builder: (context, con, focusNode) {
                 return TextFormField(
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                   validator: (value) {
                     if(value == null || value.isEmpty){
                       return "Please Fill This Field";

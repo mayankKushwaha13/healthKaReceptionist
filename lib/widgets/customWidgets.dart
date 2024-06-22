@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receptionist/constants/colors.dart';
@@ -35,9 +34,9 @@ class MyTextField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: GoogleFonts.lato(
-          color: textColor,
-          fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-        ),
+            color: textColor,
+            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+          ),
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.black54),
           ),
@@ -83,19 +82,15 @@ class CircularDesign extends StatelessWidget {
   }
 }
 
-class BannerType extends CustomClipper<Path>{
+class BannerType extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     double w = size.width;
     double h = size.height;
 
     final path = Path();
-    path.lineTo(0, h-100);
-    path.quadraticBezierTo(
-      w/2,
-      h + 80,
-      w, h-100
-    );
+    path.lineTo(0, h - 100);
+    path.quadraticBezierTo(w / 2, h + 80, w, h - 100);
     path.lineTo(w, 0);
     path.close();
     return path;
@@ -111,8 +106,10 @@ class MyAppBar extends StatelessWidget {
   const MyAppBar({
     super.key,
     required this.title,
+    this.size = 25,
   });
   final String title;
+  final double size;
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -128,9 +125,10 @@ class MyAppBar extends StatelessWidget {
             width: double.infinity,
             child: Center(
               child: Text(
+                textAlign: TextAlign.center,
                 "${title}",
                 style: GoogleFonts.aBeeZee(
-                  fontSize: 25,
+                  fontSize: size,
                   fontWeight: FontWeight.bold,
                   color: MyColors.white,
                 ),
@@ -138,18 +136,24 @@ class MyAppBar extends StatelessWidget {
             ),
           ),
         ),
-        IconButton(onPressed: (){}, 
-        icon: Container(
-          transform: Matrix4.translationValues(-MediaQuery.of(context).size.width/2 + 35, -45, 0),
-          child: Icon(Icons.menu, color: MyColors.Peach,size: 30,))
-          )
+        Container(
+            transform: Matrix4.translationValues(
+                -MediaQuery.of(context).size.width / 2 + 35, -45, 0),
+            child: IconButton(
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+            print("pressed");
+          },
+          icon: const Icon(
+            Icons.menu,
+            color: MyColors.Peach,
+            size: 30,
+          ),
+        )),
       ],
     );
   }
 }
-
-
-
 
 class DrawerIcon extends StatelessWidget {
   const DrawerIcon({
@@ -165,12 +169,16 @@ class DrawerIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
       return Container(
-        transform: Matrix4.translationValues(-width/2 + 30, -60, 0),
+        transform: Matrix4.translationValues(-width / 2 + 30, -60, 0),
         child: GestureDetector(
           onTap: () {
             Scaffold.of(context).openDrawer();
           },
-          child: Icon(Icons.menu, size: 30, color: color,),
+          child: Icon(
+            Icons.menu,
+            size: 30,
+            color: color,
+          ),
         ),
       );
     });
