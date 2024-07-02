@@ -95,7 +95,7 @@ class LoginScreen extends StatelessWidget {
                       child: InkWell(
                         onTap: () {
                           // Navigator.push(context, MaterialPageRoute(builder: (context)=> patientProfileScreen()));
-                          Get.to(HomeScreen(),
+                          Get.to(const HomeScreen(),
                               transition: Transition.rightToLeftWithFade);
                         },
                         child: Center(

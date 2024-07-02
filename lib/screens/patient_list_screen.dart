@@ -25,7 +25,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                 title: "${widget.name}'s\nPatients",
                 size: 20,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Padding(
@@ -34,13 +34,13 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   children: [
                     ListView.builder(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: patients.length,
                         itemBuilder: (context, index) {
                           final patient = patients[index];
                           return Card(
                             color: MyColors.Navy,
-                            margin: EdgeInsets.symmetric(vertical: 7),
+                            margin: const EdgeInsets.symmetric(vertical: 7),
                             elevation: 5,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -55,7 +55,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                     patient.icon,
                                     height: 80,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 16,
                                   ),
                                   Column(
@@ -71,7 +71,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                             ),
                                             children: [
                                               TextSpan(
-                                                  text: "${patient.name}",
+                                                  text: patient.name,
                                                   style: GoogleFonts.aBeeZee(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
@@ -79,7 +79,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                                   )),
                                             ]),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 10,
                                       ),
                                       RichText(

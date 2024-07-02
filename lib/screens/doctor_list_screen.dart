@@ -19,7 +19,7 @@ class DoctorsListPage extends StatelessWidget {
         backgroundColor: MyColors.Seashell,
         body: Column(
           children: [
-            MyAppBar(title: "Doctor's Patients"),
+            const MyAppBar(title: "Doctor's Patients"),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receptionist/constants/colors.dart';
-import 'package:receptionist/screens/billing_screen.dart';
 import 'package:receptionist/screens/home_screen.dart';
 import 'package:receptionist/screens/receptionist_profile_screen.dart';
 
@@ -15,7 +14,7 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: MyColors.BackgroundHealthka,
             ),
             child: Padding(
@@ -23,7 +22,7 @@ class AppDrawer extends StatelessWidget {
               child: Image.asset("lib/assets/healthka.png"),
             ),
           ),
-          SizedBox(height: 10,),
+          const SizedBox(height: 10,),
           Container(
             color: MyColors.MillenialPink,
             child: ListTile(
@@ -40,7 +39,7 @@ class AppDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: 
-                  (context)=>HomeScreen()),(route)=>route.isCurrent
+                  (context)=>const HomeScreen()),(route)=>route.isCurrent
                   );
               },
             ),
@@ -68,7 +67,7 @@ class AppDrawer extends StatelessWidget {
           //     },
           //   ),
           // ),
-          SizedBox(height: 10,),
+          const SizedBox(height: 10,),
           Container(
             color: MyColors.MillenialPink,
             child: ListTile(
@@ -82,12 +81,12 @@ class AppDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ReceptionistProfilePage()),
+                      builder: (context) => const ReceptionistProfilePage()),
                 );
               },
             ),
           ),
-          Expanded(child: SizedBox()),
+          const Expanded(child: SizedBox()),
           Container(
             color: MyColors.MillenialPink,
             child: ListTile(

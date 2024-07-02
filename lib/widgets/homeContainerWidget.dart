@@ -24,7 +24,7 @@ class HomeContainer extends StatelessWidget {
             BoxShadow(
               blurRadius: 5,
               spreadRadius: 1,
-              offset: Offset(-4, 4),
+              offset: const Offset(-4, 4),
               color: Colors.grey.shade600,
             )
           ]),
@@ -38,7 +38,7 @@ class HomeContainer extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Image.asset("lib/assets/${icon}.png",height: 100,),
+              Image.asset("lib/assets/$icon.png",height: 100,),
               Text(
                 title,
                 textAlign: TextAlign.center,

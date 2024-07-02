@@ -10,7 +10,7 @@ class ReceptionistProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        drawer: AppDrawer(),
+        drawer: const AppDrawer(),
         backgroundColor: MyColors.Seashell,
         body: SingleChildScrollView(
           child: Center(
@@ -18,7 +18,7 @@ class ReceptionistProfilePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                MyAppBar(title: "Receptionist Profile"),
+                const MyAppBar(title: "Receptionist Profile"),
                 const CircleAvatar(
                   radius: 80,
                   backgroundColor: MyColors.Navy,
@@ -37,7 +37,7 @@ class ReceptionistProfilePage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Card(
-                    color: Color.fromARGB(255, 219, 233, 242),
+                    color: const Color.fromARGB(255, 219, 233, 242),
                     child: Container(
                       padding: const EdgeInsets.all(16.0),
                       decoration: BoxDecoration(

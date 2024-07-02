@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receptionist/constants/colors.dart';
 import 'package:receptionist/constants/patient_list.dart';
@@ -13,11 +12,13 @@ class AssignTextField2 extends StatelessWidget {
     required this.controller,
     required this.title,
     required this.lookingFor,
+    this.notNeeded = false,
   });
 
   final TextEditingController controller;
   final String title;
   final String lookingFor;
+  final bool notNeeded;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class AssignTextField2 extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            "${title} : ",
+            "$title : ",
             style: GoogleFonts.aBeeZee(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -38,13 +39,17 @@ class AssignTextField2 extends StatelessWidget {
               itemBuilder: (context, dataitem) {
                 return ListTile(
                   leading: Image(image: AssetImage(dataitem.icon), height: 40,),
-                  title: Text("${dataitem}"),
+                  title: Text("$dataitem"),
                 );
               },
               onSelected: (value) {
                 controller.text = value.toString();
               },
               suggestionsCallback: (search) {
+                if(notNeeded)
+                {
+                  return null;
+                }
                 return patients.where((element){
                   return element.phoneNumber.contains(search);
                 }).toList();

@@ -126,7 +126,7 @@ class MyAppBar extends StatelessWidget {
             child: Center(
               child: Text(
                 textAlign: TextAlign.center,
-                "${title}",
+                title,
                 style: GoogleFonts.aBeeZee(
                   fontSize: size,
                   fontWeight: FontWeight.bold,

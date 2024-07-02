@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,6 +21,9 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   final _formKey = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
   String? selectDoctor;
+
+  String genderDropDown = "F";
+  String appointmentDropDown = "Check Up";
   final patName = TextEditingController();
 
   final phNum = TextEditingController();
@@ -36,8 +40,6 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String genderDropDown = "F";
-    String appointmentDropDown = "New";
     // final width = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
@@ -47,14 +49,14 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
             behavior: HitTestBehavior.opaque,
             onTap: () {
               setState(() {
-                FocusScope.of(context).requestFocus(new FocusNode());
+                FocusScope.of(context).requestFocus(FocusNode());
               });
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MyAppBar(title: "Create Appointments"),
-                SizedBox(
+                const MyAppBar(title: "Create Appointments"),
+                const SizedBox(
                   height: 10,
                 ),
                 Row(
@@ -88,6 +90,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                         controller: patID,
                         title: "Patient's ID",
                         lookingFor: "ID",
+                        notNeeded: true,
                       ),
                       const SizedBox(
                         height: 20,
@@ -104,6 +107,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                         controller: phNum,
                         title: "Phone No. ",
                         lookingFor: "Phone",
+                        notNeeded: true,
                       ),
                       const SizedBox(
                         height: 20,
@@ -112,6 +116,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                         controller: age,
                         title: "Patient's Age",
                         lookingFor: "Age",
+                        notNeeded: true,
                       ),
                       const SizedBox(
                         height: 20,
@@ -129,7 +134,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
                           color: MyColors.Rosewood,
                           borderRadius: BorderRadius.circular(8),
@@ -146,7 +151,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                             style: GoogleFonts.aBeeZee(
                               fontSize: 20,
                             ),
-                            items: [
+                            items: const [
                               DropdownMenuItem(
                                   value: "F", child: Text("Female")),
                               DropdownMenuItem(value: "M", child: Text("Male")),
@@ -160,7 +165,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Padding(
@@ -173,7 +178,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
                           color: MyColors.Rosewood,
                           borderRadius: BorderRadius.circular(12),
@@ -189,11 +194,11 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                             style: GoogleFonts.aBeeZee(
                               fontSize: 20,
                             ),
-                            items: [
+                            items: const [
                               DropdownMenuItem(
-                                  value: "New", child: Text("New")),
+                                  value: "Check Up", child: Text("Check Up")),
                               DropdownMenuItem(
-                                  value: "FollowUp", child: Text("Follow Up")),
+                                  value: "Follow Up", child: Text("Follow Up")),
                             ],
                             onChanged: (String? newValue) {
                               setState(() {
@@ -216,7 +221,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Container(
-                      padding: EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                           color: MyColors.Pink,
                           borderRadius: BorderRadius.circular(12)),
@@ -271,13 +276,13 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                           style: GoogleFonts.aBeeZee(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 50,
                         ),
                         Column(
                           children: [
                             Container(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
                                   color: MyColors.Pink,
@@ -288,7 +293,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                     fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             Ink(
@@ -361,16 +366,18 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                               )),
                           items: doctors
                               .map((e) => DropdownMenuItem<String>(
+                                    value: e.doctorId,
                                     child: Wrap(
                                       alignment: WrapAlignment.spaceBetween,
                                       runAlignment: WrapAlignment.spaceBetween,
                                       children: [
-                                        SizedBox(width: double.infinity,),
+                                        const SizedBox(
+                                          width: double.infinity,
+                                        ),
                                         Text("${e.firstName} ${e.lastName}"),
-                                        Text("${e.doctorId}"),
+                                        Text(e.doctorId),
                                       ],
                                     ),
-                                    value: e.doctorId,
                                   ))
                               .toList(),
                           onChanged: (String? newValue) {
@@ -394,7 +401,33 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          if (_formKey.currentState!.validate() &&
+                              _formKey2.currentState!.validate()) {
+                            setState(() {
+                              CollectionReference collRef = FirebaseFirestore.instance.collection("Appointments");
+                              
+                              // data.add(Appointment(
+                              //     aptDate: selecteddate,
+                              //     aptTime: selectedtime,
+                              //     aptType: appointmentDropDown,
+                              //     doctor: selectDoctor!,
+                              //     // patientId: patID.text,
+                              //     phoneNumber: phNum.text,
+                              //     // patientAge: age.text,
+                              //     patientName: patName.text)
+                              //     );
+                              collRef.add({
+                                "patientName" : patName.text,
+                                "phoneNum" : phNum.text,
+                                "doctor" : selectDoctor!,
+                                "aptType" : appointmentDropDown,
+                                "aptTime" : "${selectedtime.hour} : ${selectedtime.minute}",
+                                "aptDate" : "${selecteddate.day}/${selecteddate.month}/${selecteddate.year}"
+                              });
+                            });
+                          }
+                        },
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Center(
@@ -429,8 +462,10 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                       patAge: age.text,
                                       patPhone: phNum.text,
                                       patGender: genderDropDown,
-                                      date: "${selecteddate.day}/${selecteddate.month}/${selecteddate.year}",
-                                      time: "${selectedtime.hour}:${selectedtime.minute}",
+                                      date:
+                                          "${selecteddate.day}/${selecteddate.month}/${selecteddate.year}",
+                                      time:
+                                          "${selectedtime.hour}:${selectedtime.minute}",
                                       docID: selectDoctor!,
                                     ),
                                 transition: Transition.rightToLeft);
@@ -453,7 +488,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
               ],

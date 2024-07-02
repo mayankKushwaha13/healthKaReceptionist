@@ -11,11 +11,13 @@ class AssignTextField extends StatelessWidget {
     required this.controller,
     required this.title,
     required this.lookingFor,
+    this.notNeeded = false,
   });
 
   final TextEditingController controller;
   final String title;
   final String lookingFor;
+  final bool notNeeded;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class AssignTextField extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            "${title} : ",
+            "$title : ",
             style: GoogleFonts.aBeeZee(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -36,13 +38,16 @@ class AssignTextField extends StatelessWidget {
               itemBuilder: (context, dataitem) {
                 return ListTile(
                   leading: Image(image: AssetImage(dataitem.icon), height: 40,),
-                  title: Text("${dataitem}"),
+                  title: Text("$dataitem"),
                 );
               },
               onSelected: (value) {
                 controller.text = value.toString();
               },
               suggestionsCallback: (search) {
+                if(notNeeded){
+                  return null;
+                }
                 return patients.where((element){
                   if (lookingFor == "Name")
                   {

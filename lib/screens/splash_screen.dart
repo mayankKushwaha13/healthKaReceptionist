@@ -8,6 +8,8 @@ import 'package:receptionist/widgets/customWidgets.dart';
 
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -16,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(milliseconds: 3550), () {
+    Timer(const Duration(milliseconds: 3550), () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => LoginScreen())); // Replace HomeScreen with your main screen
     });

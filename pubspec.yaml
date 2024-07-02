@@ -13,6 +13,15 @@ dependencies:
   get:
   carousel_slider: ^4.2.1
   flutter_typeahead: 5.2.0
+  firebase_core: ^3.1.1
+  cloud_firestore: ^5.0.2
+  printing: ^5.13.1
+  pdf: ^3.11.0
+  open_filex: ^4.4.0
+  path_provider: ^2.1.3
+  path: ^1.9.0
+  permission_handler: ^11.3.1
+  device_info_plus: ^10.1.0
 
 dev_dependencies:
   flutter_test:

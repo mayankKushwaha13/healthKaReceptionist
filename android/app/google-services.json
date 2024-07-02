@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "603200531185",
+    "project_id": "healthka-receptionist",
+    "storage_bucket": "healthka-receptionist.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603200531185:android:d62ab5346df8f118339750",
+        "android_client_info": {
+          "package_name": "com.example.receptionist"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4ImZ3P2TdcViGsJQ2qUBR-uvn-RWXElE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
