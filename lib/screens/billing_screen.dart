@@ -1,8 +1,9 @@
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:receptionist/constants/colors.dart';
-import 'package:receptionist/screens/print_bill.dart';
+import 'package:receptionist/constants/permission.dart';
+import 'package:receptionist/screens/print_bill_screen.dart';
 import 'package:receptionist/widgets/appDrawerWidget.dart';
 import 'package:receptionist/widgets/billServiceFieldWidget.dart';
 import 'package:receptionist/widgets/customWidgets.dart';
@@ -73,28 +74,7 @@ class _BillingScreenState extends State<BillingScreen> {
     }
   }
 
-  Future<bool> requestPermission(Permission permission) async {
-    AndroidDeviceInfo build = await DeviceInfoPlugin().androidInfo;
-    if (build.version.sdkInt >= 30) {
-      var storage = await Permission.storage.request();
-      if (storage.isGranted) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      if (await permission.isGranted) {
-        return true;
-      } else {
-        var result = await permission.request();
-        if (result.isGranted) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    }
-  }
+  
 
   void _printBill() async {
     if (_formKey.currentState!.validate()) {
@@ -109,6 +89,21 @@ class _BillingScreenState extends State<BillingScreen> {
         });
       }
       await requestPermission(Permission.storage);
+      setState(() {
+        CollectionReference collRef2 =
+            FirebaseFirestore.instance.collection("Bills");
+        collRef2.add({
+          "total": total,
+          "doctorID": widget.docID,
+          "date": widget.date,
+          "patAge": widget.patAge,
+          "patGender": widget.patGender,
+          "patName": widget.patName,
+          "patPhone": widget.patPhone,
+          "time": widget.time,
+          "billDetails": _billDetails
+        });
+      });
       createBill(
           total: total,
           doctorID: widget.docID,
@@ -119,18 +114,9 @@ class _BillingScreenState extends State<BillingScreen> {
           patPhone: widget.patPhone,
           time: widget.time,
           billDetails: _billDetails
-      );
+          );
     }
   }
-
-  // _showBillDialog (double total) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return BillDialog(billDetails: _billDetails, total: total);
-  //     },
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {

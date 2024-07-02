@@ -1,386 +1,214 @@
-
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:receptionist/constants/colors.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/pdf.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:printing/printing.dart';
 import 'package:receptionist/constants/doctor_list.dart';
 
-class PrintBillScreen extends StatefulWidget {
-  final String doctorID;
-  final String patName;
-  final String patAge;
-  final String patGender;
-  final String patPhone;
-  final String date;
-  final String time;
-  final double total;
-  final List<Map<String, String>> billDetails;
-  const PrintBillScreen(
-      {super.key,
-      required this.doctorID,
-      required this.billDetails, required this.patName, required this.patAge, required this.patGender, required this.patPhone, required this.date, required this.time, required this.total});
-
-  @override
-  State<PrintBillScreen> createState() => _PrintBillScreenState();
-}
-
-class _PrintBillScreenState extends State<PrintBillScreen> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    setState(() {
-      print("started");
-    });
-  }
-  @override
-  Widget build(BuildContext context) {
-    int index = doctors.indexWhere((e) => e.doctorId == widget.doctorID);
-    var doctor = doctors[index];
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: MyColors.Seashell,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Card(
-                margin: const EdgeInsets.all(10),
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+createBill({
+  required double total,
+  required String doctorID,
+  required String patName,
+  required String patAge,
+  required String patGender,
+  required String patPhone,
+  required String date,
+  required String time,
+  required List<Map<String, String>> billDetails,
+}) async {
+  int index = doctors.indexWhere((e) => e.doctorId == doctorID);
+  var doctor = doctors[index];
+  var docImage = (await rootBundle.load(doctor.image)).buffer.asUint8List();
+  final prescription = pw.Document();
+  final fontfamily2 = await PdfGoogleFonts.latoRegular();
+  prescription.addPage(pw.MultiPage(
+      margin: const pw.EdgeInsets.symmetric(horizontal: 50, vertical: 40),
+      pageFormat: PdfPageFormat.a4,
+      theme: pw.ThemeData(
+          defaultTextStyle: pw.TextStyle(
+        fontSize: 14,
+        font: fontfamily2,
+      )),
+      footer: (context) {
+        return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+          pw.Row(mainAxisAlignment: pw.MainAxisAlignment.start, children: [
+            pw.Text("Clinic Name : ",
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+            pw.Text("Cure and Care Clinic "),
+          ]),
+          pw.Row(mainAxisAlignment: pw.MainAxisAlignment.start, children: [
+            pw.Text("Ph : ",
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+            pw.Expanded(child: pw.Text("123456789/80/93")),
+            pw.Text("Timings : ",
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+            pw.Text("2 PM to 6 PM"),
+          ]),
+          pw.Row(mainAxisAlignment: pw.MainAxisAlignment.start, children: [
+            pw.Text("Address : ",
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+            pw.Text("Phase 2,phase 2 ground,Jodpurpark West Bengal, 700095"),
+          ])
+        ]);
+      },
+      build: (context) {
+        return [
+          pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+            pw.Divider(),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: pw.CrossAxisAlignment.end,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Row(children: [
+                      pw.Text("Doctor : ",
+                          style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold, fontSize: 18)),
+                      pw.Text("${doctor.firstName} ${doctor.lastName}",
+                          style: const pw.TextStyle(fontSize: 18)),
+                    ]),
+                    pw.Row(children: [
+                      pw.Text("Qualification : ",
+                          style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold, fontSize: 18)),
+                      pw.Text(doctor.qualification,
+                          style: const pw.TextStyle(fontSize: 18)),
+                    ]),
+                    pw.Row(children: [
+                      pw.Text("Specialisation : ",
+                          style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold, fontSize: 18)),
+                      pw.Text(doctor.specialisation,
+                          style: const pw.TextStyle(fontSize: 18)),
+                    ]),
+                  ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      const Divider(
-                        color: MyColors.DarkSienna,
-                        thickness: 1,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RichText(
-                                  text: TextSpan(
-                                      style: GoogleFonts.lato(
-                                        fontSize: 14,
-                                        color: Colors.black,
-                                      ),
-                                      children: [
-                                    TextSpan(
-                                      text: "Name : ",
-                                      style: GoogleFonts.lato(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: "${doctor.firstName} ${doctor.lastName}",
-                                    ),
-                                  ])),
-                              RichText(
-                                  text: TextSpan(
-                                      style: GoogleFonts.lato(
-                                        fontSize: 14,
-                                        color: Colors.black,
-                                      ),
-                                      children: [
-                                    TextSpan(
-                                      text: "Qualification : ",
-                                      style: GoogleFonts.lato(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: doctor.qualification,
-                                    ),
-                                  ])),
-                              RichText(
-                                  text: TextSpan(
-                                      style: GoogleFonts.lato(
-                                        fontSize: 14,
-                                        color: Colors.black,
-                                      ),
-                                      children: [
-                                    TextSpan(
-                                      text: "Specialisation : ",
-                                      style: GoogleFonts.lato(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: doctor.specialisation,
-                                    ),
-                                  ])),
-                            ],
-                          ),
-                          SizedBox(
-                              height: 100,
-                              width: 100,
-                              child: Image.asset(
-                                doctor.image,
-                                fit: BoxFit.contain,
-                              )),
-                        ],
-                      ),
-                      const Divider(
-                        color: MyColors.DarkSienna,
-                        thickness: 1,
-                      ),
-                      Wrap(
-                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        runAlignment: WrapAlignment.spaceBetween,
-                        alignment: WrapAlignment.spaceBetween,
-                        children: [
-                          const SizedBox(width: double.infinity,),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RichText(
-                                    text: TextSpan(
-                                        style: GoogleFonts.lato(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                        ),
-                                        children: [
-                                      TextSpan(
-                                        text: "Name : ",
-                                        style: GoogleFonts.lato(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: widget.patName,
-                                      ),
-                                    ])),
-                                    RichText(
-                                    text: TextSpan(
-                                        style: GoogleFonts.lato(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                        ),
-                                        children: [
-                                      TextSpan(
-                                        text: "Phone No. : ",
-                                        style: GoogleFonts.lato(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: widget.patPhone,
-                                      ),
-                                    ])),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RichText(
-                                    text: TextSpan(
-                                        style: GoogleFonts.lato(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                        ),
-                                        children: [
-                                      TextSpan(
-                                        text: "Age : ",
-                                        style: GoogleFonts.lato(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: widget.patAge,
-                                      ),
-                                    ])),
-                                    RichText(
-                                    text: TextSpan(
-                                        style: GoogleFonts.lato(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                        ),
-                                        children: [
-                                      TextSpan(
-                                        text: "Gender : ",
-                                        style: GoogleFonts.lato(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: widget.patGender,
-                                      ),
-                                    ])),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RichText(
-                                    text: TextSpan(
-                                        style: GoogleFonts.lato(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                        ),
-                                        children: [
-                                      TextSpan(
-                                        text: "Date : ",
-                                        style: GoogleFonts.lato(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: widget.date,
-                                      ),
-                                    ])),
-                                    RichText(
-                                    text: TextSpan(
-                                        style: GoogleFonts.lato(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                        ),
-                                        children: [
-                                      TextSpan(
-                                        text: "Time : ",
-                                        style: GoogleFonts.lato(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: widget.time,
-                                      ),
-                                    ])),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 10,),
-                      const Divider(
-                        color: MyColors.Navy2,
-                        thickness: 1,
-                      ),
-                      Center(
-                        child: Text(
-                          "Bill",
-                          style : GoogleFonts.roboto(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: MyColors.DarkSienna,
-                          )
-                        ),
-                      ),
-                      const Divider(
-                        color: MyColors.Navy2,
-                        thickness: 2,
-                      ),
-                      const SizedBox(height: 20,),
-                  
-                      SizedBox(
-                        height: 400,
-                        child: ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: widget.billDetails.length,
-                          itemBuilder: (context,index)
-                          {
-                            final serviceType = widget.billDetails[index]['service'];
-                            final charges = widget.billDetails[index]['charges'];
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  serviceType!,
-                                  style: GoogleFonts.lato(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "₹ $charges",
-                                  style: GoogleFonts.lato(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              ],
-                            );
-                          }
-                          ),
-                      ),
-                      const Divider(
-                        color: MyColors.DarkSienna,
-                        thickness: 1,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Total : ",
-                            style: GoogleFonts.lato(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "₹ ${widget.total}",
-                            style: GoogleFonts.lato(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
+                pw.Container(
+                  child: pw.Image(pw.MemoryImage(docImage), height: 80),
                 ),
-              ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //   children: [
-              //     ElevatedButton(
-              //       onPressed: (){}, 
-              //       style: ButtonStyle(
-              //         elevation: WidgetStatePropertyAll(8),
-              //         backgroundColor: WidgetStatePropertyAll(MyColors.Navy2),
-              //       ),
-              //       child: Icon(
-              //         Icons.share,
-              //         color: MyColors.white,
-              //       )
-              //     ),
-              //     ElevatedButton(
-              //       onPressed: ()=> printDoc(), 
-              //       style: ButtonStyle(
-              //         elevation: WidgetStatePropertyAll(8),
-              //         backgroundColor: WidgetStatePropertyAll(MyColors.RedDark),
-              //       ),
-              //       child: Icon(
-              //         Icons.download,
-              //         color: MyColors.white,
-              //       )
-              //     ),
-                  
-              //   ],
-              // )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    widget.billDetails.clear();
-  }
+              ],
+            ),
+            pw.Divider(
+              thickness: 2,
+            ),
+            pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Row(children: [
+                          pw.Text("Patient Name : ",
+                              style:
+                                  pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          pw.Text(patName),
+                        ]),
+                        pw.Row(children: [
+                          pw.Text("Patient Number : ",
+                              style:
+                                  pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          pw.Text(patPhone),
+                        ]),
+                      ]),
+                  pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Row(children: [
+                          pw.Text("Gender : ",
+                              style:
+                                  pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          pw.Text(patGender),
+                        ]),
+                        pw.Row(children: [
+                          pw.Text("Age : ",
+                              style:
+                                  pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          pw.Text(patAge),
+                        ]),
+                      ]),
+                  pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Row(children: [
+                          pw.Text("Date : ",
+                              style:
+                                  pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          pw.Text(
+                              // "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
+                              date),
+                        ]),
+                        pw.Row(children: [
+                          pw.Text("Time : ",
+                              style:
+                                  pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          pw.Text(
+                              // "${TimeOfDay.now().hour}:${TimeOfDay.now().minute}"
+                              time),
+                        ]),
+                      ])
+                ]),
+            pw.Divider(thickness: 2, color: PdfColors.indigo700),
+            pw.Center(
+              child: pw.Text("Bill",
+                  style: pw.TextStyle(
+                    fontSize: 22,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.indigo900,
+                  )),
+            ),
+            pw.Divider(thickness: 2, color: PdfColors.indigo700),
+            for (int i = 0; i < billDetails.length; i++)
+              pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                      billDetails[i]['service']!,
+                      style: pw.TextStyle(
+                        fontSize: 18,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.Text(
+                      "Rs. ${billDetails[i]['charges']}",
+                      style: const pw.TextStyle(
+                        fontSize: 18,
+                      ),
+                    )
+                  ]),
+            pw.Container(
+              transform: Matrix4.translationValues(0, -450 + 21.4285714286 * billDetails.length.toDouble(), 0),
+              child:pw.Column(
+              children:[
+                pw.Divider(),
+                pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text("Total : ",
+                      style: pw.TextStyle(
+                        fontSize: 20,
+                        fontWeight: pw.FontWeight.bold,
+                      )),
+                  pw.Text("Rs. $total",
+                      style: const pw.TextStyle(
+                        fontSize: 20,
+                      ))
+                ]),
+                pw.Divider()
+                ]
+                ))
+          ])
+        ];
+      }));
+
+  final dir = await getTemporaryDirectory();
+  final fileName = "${patName}_bill_${date.replaceAll("/", "")}.pdf";
+  final savePath = path.join(dir.path, fileName);
+  final file = File(savePath);
+  await file.writeAsBytes(await prescription.save());
+  OpenFilex.open(file.path);
 }

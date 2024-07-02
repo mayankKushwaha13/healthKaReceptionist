@@ -406,17 +406,6 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                               _formKey2.currentState!.validate()) {
                             setState(() {
                               CollectionReference collRef = FirebaseFirestore.instance.collection("Appointments");
-                              
-                              // data.add(Appointment(
-                              //     aptDate: selecteddate,
-                              //     aptTime: selectedtime,
-                              //     aptType: appointmentDropDown,
-                              //     doctor: selectDoctor!,
-                              //     // patientId: patID.text,
-                              //     phoneNumber: phNum.text,
-                              //     // patientAge: age.text,
-                              //     patientName: patName.text)
-                              //     );
                               collRef.add({
                                 "patientName" : patName.text,
                                 "phoneNum" : phNum.text,
@@ -465,7 +454,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                                       date:
                                           "${selecteddate.day}/${selecteddate.month}/${selecteddate.year}",
                                       time:
-                                          "${selectedtime.hour}:${selectedtime.minute}",
+                                          "${selectedtime.hour} : ${selectedtime.minute}",
                                       docID: selectDoctor!,
                                     ),
                                 transition: Transition.rightToLeft);

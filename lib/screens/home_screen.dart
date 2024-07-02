@@ -113,7 +113,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             HomeContainer(
                               title: "Manage\nBills",
                               icon: "bill",
-                              page: ManageBillsScreen(),
+                              page: ManageBillsScreen(
+                                
+                              ),
                             ),
                           ],
                         ),
