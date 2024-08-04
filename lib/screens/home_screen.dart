@@ -26,7 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getDoctors();
   }
   @override
 
@@ -161,54 +160,65 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 20,),
-              CarouselSlider(
-                items: doctors.map((e)=>
-                  Ink(
-                    width: 200,
-                    decoration: BoxDecoration(
-                      color: MyColors.FadedBlue,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(12),
-                      onTap: (){
-                        Get.to(
-                          ()=>SavedAppointmentsScreen(doctorID: e.doctorId)
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              child: Image.asset(e.image,
-                              ),
-                            ),
-                            const SizedBox(height: 10,),
-                            Text(e.firstName,
-                            style: GoogleFonts.aBeeZee(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: MyColors.DarkSienna,
-                            ),
-                            ),
-                          ],
+              FutureBuilder(
+                future: getDoctors(),
+                builder: (context, snapshot) {
+                  if(doctors.isNotEmpty){
+                  return CarouselSlider(
+                    items: doctors.map((e)=>
+                      Ink(
+                        width: 200,
+                        decoration: BoxDecoration(
+                          color: MyColors.FadedBlue,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: (){
+                            Get.to(
+                              ()=>SavedAppointmentsScreen(doctorID: e.doctorId)
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Expanded(
+                                  child: Image.asset(e.image,
+                                  ),
+                                ),
+                                const SizedBox(height: 10,),
+                                Text(e.firstName,
+                                style: GoogleFonts.aBeeZee(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: MyColors.DarkSienna,
+                                ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    ).toList(),
+                    options: CarouselOptions(
+                      aspectRatio: 1.628,
+                      viewportFraction: 0.5,
+                      enlargeCenterPage: true,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          carouselIndex = index;
+                        });
+                      },
                     ),
-                  )
-                ).toList(),
-                options: CarouselOptions(
-                  aspectRatio: 1.628,
-                  viewportFraction: 0.5,
-                  enlargeCenterPage: true,
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      carouselIndex = index;
-                    });
-                  },
-                ),
+                  );}
+                  else{
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }
               ),
               const SizedBox(height: 20,),
               Row(
