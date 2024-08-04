@@ -2,15 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receptionist/constants/colors.dart';
-import 'package:receptionist/constants/doctor_list.dart';
+import 'package:receptionist/functions/get_doctors.dart';
 import 'package:receptionist/screens/patient_list_screen.dart';
 import 'package:receptionist/widgets/appDrawerWidget.dart';
 import 'package:receptionist/widgets/customWidgets.dart';
 
 
-class DoctorsListPage extends StatelessWidget {
+class DoctorsListPage extends StatefulWidget {
   const DoctorsListPage({super.key});
 
+  @override
+  State<DoctorsListPage> createState() => _DoctorsListPageState();
+}
+
+class _DoctorsListPageState extends State<DoctorsListPage> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDoctors();
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -50,7 +62,7 @@ class DoctorsListPage extends StatelessWidget {
                       final doctor = doctors[index];
                       return GestureDetector(
                         onTap: (){
-                          Get.to(()=>PatientListScreen(name: doctor.firstName), transition: Transition.rightToLeft);
+                          Get.to(()=>PatientListScreen(name: doctor.firstName, doctorID: doctor.doctorId,), transition: Transition.rightToLeft);
                         },
                         child: Card(
                           color: MyColors.FadedBlue,
@@ -126,27 +138,27 @@ class DoctorsListPage extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 8),
-                                    RichText(
-                                      text: TextSpan(
-                                        style: GoogleFonts.aBeeZee(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: MyColors.DarkSienna,
-                                      ),
-                                      children: [TextSpan(
-                                        text: "Phone : ",
-                                        style: GoogleFonts.aBeeZee(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: MyColors.Navy2
-                                        )
-                                      ),
-                                      TextSpan(
-                                        text: doctor.phoneNumber,
-                                      )
-                                      ]
-                                      ),
-                                    ),
+                                    // RichText(
+                                    //   text: TextSpan(
+                                    //     style: GoogleFonts.aBeeZee(
+                                    //     fontSize: 16,
+                                    //     fontWeight: FontWeight.bold,
+                                    //     color: MyColors.DarkSienna,
+                                    //   ),
+                                    //   children: [TextSpan(
+                                    //     text: "Phone : ",
+                                    //     style: GoogleFonts.aBeeZee(
+                                    //       fontSize: 18,
+                                    //       fontWeight: FontWeight.bold,
+                                    //       color: MyColors.Navy2
+                                    //     )
+                                    //   ),
+                                    //   TextSpan(
+                                    //     text: doctor.phoneNumber,
+                                    //   )
+                                    //   ]
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                               ],

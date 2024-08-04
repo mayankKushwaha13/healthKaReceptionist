@@ -1,9 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receptionist/constants/colors.dart';
-import 'package:receptionist/constants/doctor_list.dart';
+import 'package:receptionist/data/shared_preferences.dart';
+import 'package:receptionist/functions/create_appointments.dart';
+import 'package:receptionist/functions/get_doctors.dart';
 import 'package:receptionist/screens/billing_screen.dart';
 import 'package:receptionist/widgets/assignTextFieldNumberWidget.dart';
 import 'package:receptionist/widgets/assignTextFieldWidget.dart';
@@ -37,6 +38,12 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
   TimeOfDay selectedtime = TimeOfDay.now();
 
   DateTime selecteddate = DateTime.now();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDoctors();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -405,15 +412,18 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                           if (_formKey.currentState!.validate() &&
                               _formKey2.currentState!.validate()) {
                             setState(() {
-                              CollectionReference collRef = FirebaseFirestore.instance.collection("Appointments");
-                              collRef.add({
-                                "patientName" : patName.text,
-                                "phoneNum" : phNum.text,
-                                "doctor" : selectDoctor!,
-                                "aptType" : appointmentDropDown,
-                                "aptTime" : "${selectedtime.hour} : ${selectedtime.minute}",
-                                "aptDate" : "${selecteddate.day}/${selecteddate.month}/${selecteddate.year}"
-                              });
+                              createAppointments(
+                                  patientID: patID.text,
+                                  patientName: patName.text,
+                                  phoneNumber: phNum.text,
+                                  age: age.text,
+                                  gender: genderDropDown,
+                                  appointmentType: appointmentDropDown,
+                                  appointmentDate: "${selecteddate.day}/${selecteddate.month}/${selecteddate.year}",
+                                  appointmentTime: "${selectedtime.hour} : ${selectedtime.minute}",
+                                  doctorID: selectDoctor!,
+                                  clinicID: SP.sp!.getString(SP.clinicID)!,
+                                  receptionistID: SP.sp!.getString(SP.recID)!);
                             });
                           }
                         },

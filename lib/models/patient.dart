@@ -1,4 +1,3 @@
-
 class Patient {
   final String name;
   final String phoneNumber;
@@ -8,12 +7,18 @@ class Patient {
   final String id;
   final String type;
 
-  Patient({required this.name, required this.phoneNumber, required this.firstVisitDate, required this.gender, 
-  this.icon = "lib/assets/patient.png", this.type = "Check Up", this.id = "ID001",
+  Patient({
+    required this.name,
+    required this.phoneNumber,
+    required this.firstVisitDate,
+    this.gender = "",
+    this.icon = "lib/assets/patient.png",
+    this.type = "Check Up",
+    this.id = "ID001",
   });
 
   @override
-  String toString(){
+  String toString() {
     return name;
   }
 }

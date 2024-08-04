@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receptionist/constants/colors.dart';
-import 'package:receptionist/constants/doctor_list.dart';
+import 'package:receptionist/functions/get_doctors.dart';
 import 'package:receptionist/screens/create_appointment_screen.dart';
 import 'package:receptionist/screens/doctor_list_screen.dart';
 import 'package:receptionist/screens/manage_bills_screen.dart';
@@ -22,6 +22,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   
   int carouselIndex = 0;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDoctors();
+  }
   @override
 
   Widget build(BuildContext context) {

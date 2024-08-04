@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receptionist/constants/colors.dart';
+import 'package:receptionist/data/shared_preferences.dart';
 import 'package:receptionist/screens/home_screen.dart';
+import 'package:receptionist/screens/login_screen.dart';
 import 'package:receptionist/screens/receptionist_profile_screen.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -102,7 +104,10 @@ class AppDrawer extends StatelessWidget {
                   color: MyColors.DarkSienna
                 ),
               ),
-              onTap: (){},
+              onTap: (){
+                SP.sp!.setBool(SP.login, false);
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const LoginScreen()));
+              },
             ),
           )
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:receptionist/constants/colors.dart';
+import 'package:receptionist/data/shared_preferences.dart';
 import 'package:receptionist/widgets/appDrawerWidget.dart';
 import 'package:receptionist/widgets/customWidgets.dart';
 
@@ -25,9 +26,9 @@ class ReceptionistProfilePage extends StatelessWidget {
                   child: Icon(Icons.person, size: 80, color: MyColors.Seashell),
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'MR ABC',
-                  style: TextStyle(
+                Text(
+                  SP.sp!.getString(SP.name) ?? "",
+                  style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: MyColors.DarkSienna,
@@ -47,10 +48,10 @@ class ReceptionistProfilePage extends StatelessWidget {
                         ),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Column(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.symmetric(vertical: 8.0),
                             child: Text(
                               'Receptionist',
@@ -61,41 +62,41 @@ class ReceptionistProfilePage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Divider(color: MyColors.Navy2), // Divider for separation
+                          const Divider(color: MyColors.Navy2), // Divider for separation
                           ListTile(
-                            leading: Icon(Icons.cake, color: MyColors.Indigo, size: 30,),
-                            title: Text(
+                            leading: const Icon(Icons.cake, color: MyColors.Indigo, size: 30,),
+                            title: const Text(
                               'Age',
                               style: TextStyle(color: MyColors.RedDark, fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(
-                              '30',
-                              style: TextStyle(color: MyColors.DarkSienna),
+                              SP.sp!.getString(SP.age) ?? "",
+                              style: const TextStyle(color: MyColors.DarkSienna),
                             ),
                           ),
                           ListTile(
-                            leading: Icon(Icons.wc, color: MyColors.Indigo),
-                            title: Text(
+                            leading: const Icon(Icons.wc, color: MyColors.Indigo),
+                            title: const Text(
                               'Gender',
                               style: TextStyle(color: MyColors.RedDark, fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(
-                              'Male',
-                              style: TextStyle(color: MyColors.DarkSienna),
+                              SP.sp!.getString(SP.gender) ?? "",
+                              style: const TextStyle(color: MyColors.DarkSienna),
                             ),
                           ),
                           Row(
                             children: [
                               Expanded(
                                 child: ListTile(
-                                  leading: Icon(Icons.phone, color: MyColors.Indigo),
-                                  title: Text(
+                                  leading: const Icon(Icons.phone, color: MyColors.Indigo),
+                                  title: const Text(
                                     'Phone',
                                     style: TextStyle(color: MyColors.RedDark, fontWeight: FontWeight.bold,fontSize: 16),
                                   ),
                                   subtitle: Text(
-                                    '1234567890',
-                                    style: TextStyle(color: MyColors.DarkSienna),
+                                    SP.sp!.getString(SP.phoneNumber) ?? "",
+                                    style: const TextStyle(color: MyColors.DarkSienna),
                                   ),
                                 ),
                               ),

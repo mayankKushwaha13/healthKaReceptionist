@@ -6,8 +6,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:printing/printing.dart';
-import 'package:receptionist/constants/doctor_list.dart';
-
+import 'package:receptionist/functions/get_doctors.dart';
 createBill({
   required double total,
   required String doctorID,
@@ -19,6 +18,7 @@ createBill({
   required String time,
   required List<Map<String, String>> billDetails,
 }) async {
+  getDoctors();
   int index = doctors.indexWhere((e) => e.doctorId == doctorID);
   var doctor = doctors[index];
   var docImage = (await rootBundle.load(doctor.image)).buffer.asUint8List();

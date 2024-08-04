@@ -1,8 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:receptionist/constants/colors.dart';
+import 'package:receptionist/data/appointment_database.dart';
+import 'package:receptionist/functions/get_appointments.dart';
 import 'package:receptionist/widgets/customWidgets.dart';
+
+import '../models/appointment.dart';
 
 class SavedAppointmentsScreen extends StatefulWidget {
   final String doctorID;
@@ -16,24 +19,23 @@ class SavedAppointmentsScreen extends StatefulWidget {
 class _SavedAppointmentsScreenState extends State<SavedAppointmentsScreen> {
   @override
   Widget build(BuildContext context) {
-    List data = [];
+    getAppointments(widget.doctorID);
+    List<Appointment> data = [];
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
             children: [
               const MyAppBar(title: "Appointments"),
-              StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection("Appointments")
-                      .snapshots(),
+              FutureBuilder(
+                  future: AppointmentDatabase().readAppointmentData(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       data.clear();
                       final appointments =
-                          snapshot.data?.docs.reversed.toList();
+                          snapshot.data;
                       for (var appointment in appointments!) {
-                        if (appointment['doctor'] == widget.doctorID) {
+                        if (appointment.doctorID == widget.doctorID) {
                           data.add(appointment);
                         }
                       }
@@ -49,7 +51,7 @@ class _SavedAppointmentsScreenState extends State<SavedAppointmentsScreen> {
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           var docApt = data[index];
-                          bool today = docApt["aptDate"] ==
+                          bool today = docApt.appointmentDate ==
                               ("${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}");
                           return Card(
                             margin: const EdgeInsets.all(7),
@@ -69,7 +71,7 @@ class _SavedAppointmentsScreenState extends State<SavedAppointmentsScreen> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          "Patient : " + docApt["patientName"],
+                                          "Patient : ${docApt.patientName}",
                                           style: GoogleFonts.aBeeZee(
                                             color: MyColors.DarkSienna,
                                             fontSize: 20,
@@ -104,7 +106,7 @@ class _SavedAppointmentsScreenState extends State<SavedAppointmentsScreen> {
                                               )
                                             : Container(),
                                         Text(
-                                          docApt["aptDate"],
+                                          docApt.appointmentDate,
                                           style: GoogleFonts.aBeeZee(
                                             color: MyColors.Burgundy,
                                             fontSize: 18,
@@ -129,7 +131,7 @@ class _SavedAppointmentsScreenState extends State<SavedAppointmentsScreen> {
                                           ),
                                         ),
                                         Text(
-                                          docApt["aptTime"],
+                                          docApt.appointmentTime,
                                           style: GoogleFonts.aBeeZee(
                                             color: MyColors.Burgundy,
                                             fontSize: 18,
@@ -154,7 +156,7 @@ class _SavedAppointmentsScreenState extends State<SavedAppointmentsScreen> {
                                           ),
                                         ),
                                         Text(
-                                          docApt["aptType"],
+                                          docApt.appointmentType,
                                           style: GoogleFonts.aBeeZee(
                                             color: MyColors.Burgundy,
                                             fontSize: 18,
@@ -166,34 +168,34 @@ class _SavedAppointmentsScreenState extends State<SavedAppointmentsScreen> {
                                     const SizedBox(
                                       height: 20,
                                     ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            RichText(
-                                                text: TextSpan(
-                                                    style: GoogleFonts.roboto(
-                                                      color:
-                                                          MyColors.DarkSienna,
-                                                    ),
-                                                    children: [
-                                                  TextSpan(
-                                                      text: "Phone Number : ",
-                                                      style: GoogleFonts.roboto(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 16,
-                                                      )),
-                                                  TextSpan(
-                                                      text: docApt["phoneNum"])
-                                                ])),
-                                          ],
-                                        )
-                                      ],
-                                    )
+                                    // Row(
+                                    //   mainAxisAlignment: MainAxisAlignment.end,
+                                    //   children: [
+                                    //     Column(
+                                    //       crossAxisAlignment:
+                                    //           CrossAxisAlignment.end,
+                                    //       children: [
+                                    //         RichText(
+                                    //             text: TextSpan(
+                                    //                 style: GoogleFonts.roboto(
+                                    //                   color:
+                                    //                       MyColors.DarkSienna,
+                                    //                 ),
+                                    //                 children: [
+                                    //               TextSpan(
+                                    //                   text: "Phone Number : ",
+                                    //                   style: GoogleFonts.roboto(
+                                    //                     fontWeight:
+                                    //                         FontWeight.bold,
+                                    //                     fontSize: 16,
+                                    //                   )),
+                                    //               TextSpan(
+                                    //                   text: docApt.phoneNumber)
+                                    //             ])),
+                                    //       ],
+                                    //     )
+                                    //   ],
+                                    // )
                                   ],
                                 ),
                               ),

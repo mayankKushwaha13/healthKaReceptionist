@@ -1,15 +1,31 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:receptionist/constants/API/receptionist.dart';
 import 'package:receptionist/constants/colors.dart';
+import 'package:receptionist/data/doctor_database.dart';
+import 'package:receptionist/functions/get_receptionist.dart';
+import 'package:receptionist/models/doctor.dart';
 import 'package:receptionist/screens/home_screen.dart';
 import 'package:receptionist/widgets/customWidgets.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+import '../data/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final username = TextEditingController();
+
   final password = TextEditingController();
+  bool isLogging = false;
+  bool apiCalled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -93,15 +109,69 @@ class LoginScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: InkWell(
-                        onTap: () {
-                          // Navigator.push(context, MaterialPageRoute(builder: (context)=> patientProfileScreen()));
-                          Get.to(const HomeScreen(),
-                              transition: Transition.rightToLeftWithFade);
+                        onTap: isLogging? (){
+
+                        } : () async {
+                          if(username.text.isEmpty || password.text.isEmpty){
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              (const SnackBar(content: Text("Enter Credentials")))
+                            );
+                            return;
+                          }
+                          var response = await login(
+                              username: username.text, password: password.text);
+                          if ((response != null &&
+                                  (response.statusCode.toString()[0] == "2" ||
+                                      response.statusCode == 200) && (jsonDecode(response.body)['resSuccess'].toString() == "1"))) {
+                            SP.sp!.setBool(SP.login, true);
+                            SP.sp!.setString(SP.recID, username.text);
+                            if (apiCalled) {
+                              final result = jsonDecode(response.body);
+                              var docList = await DoctorDatabase().readDoctorData();
+                              var docData = result['doctorData'];
+                              for (int i = 0; i < docData.length; i++){
+                                int found = docList.indexWhere((e)=>e.doctorId == docData[i]['doctor_id']);
+                                if (found == -1){
+                                  Doctor doctor = Doctor.fromMap(docData[i]);
+                                  DoctorDatabase().insertData(doctor);
+                                }
+                              }
+                              var clinicID = result['clinic_id'];
+                              SP.sp!.setString(SP.clinicID, clinicID);
+                            }
+                            setState(() {
+                              isLogging = true;
+                            });
+                            getReceptionist(username.text);
+                            Future.delayed(const Duration(milliseconds: 1500),
+                                () {
+                              setState(() {
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomeScreen()));
+                                isLogging = false;
+                              });
+                            });
+                          }else if(response.statusCode == 200){
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text(
+                                  "Invalid credentials"),
+                            ));
+                          }
+                          else{
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text(
+                                  "Something Went Wrong"),
+                            ));
+                          }
                         },
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
-                            child: Text(
+                            child: isLogging? const Center(
+                              child: CircularProgressIndicator(color: Colors.white,),
+                            ):Text(
                               "Login",
                               style: GoogleFonts.lato(
                                 color: MyColors.white,
@@ -122,4 +192,27 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
+  login({required String username, required String password}) async {
+    try {
+        apiCalled = true;
+        Map<String, dynamic> body = {
+          "receptionist_id": username,
+          "password": password
+        };
+        String jsonBody = jsonEncode(body);
+        var response = await http.post(
+          Uri.parse("$recepAPI/login_mobile"),
+          headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: jsonBody,
+        );
+        print(response.statusCode);
+        return response;
+    } catch (e) {
+      print(e);
+    }
+  }
+
 }

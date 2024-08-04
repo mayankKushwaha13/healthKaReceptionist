@@ -1,11 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:receptionist/constants/API/receptionist.dart';
 import 'package:receptionist/constants/colors.dart';
 import 'package:receptionist/constants/permission.dart';
+import 'package:receptionist/data/bill_database.dart';
+import 'package:receptionist/models/bill.dart';
 import 'package:receptionist/screens/print_bill_screen.dart';
 import 'package:receptionist/widgets/customWidgets.dart';
+import 'package:http/http.dart' as http;
 
 class ManageBillsScreen extends StatefulWidget {
   const ManageBillsScreen({super.key});
@@ -16,6 +22,23 @@ class ManageBillsScreen extends StatefulWidget {
 }
 
 class _ManageBillsScreenState extends State<ManageBillsScreen> {
+  getSingleBill(Bill bill) async {
+    var response = await http.post(
+      Uri.parse("$recepAPI/single_bill_data_mobile"),
+      headers: {
+        'Content-type' : 'application/json',
+        'Accept' : 'application/json'
+      },
+      body: jsonEncode({
+        'doctor_id' : bill.doctorID,
+        'clinic_id' : bill.clinicID,
+        'invoice' : bill.invoice
+      })
+    );
+    var result = jsonDecode(response.body)['data'];
+    result.add(jsonDecode(response.body)['doctor_data']);
+    return result;
+  }
   @override
   Widget build(BuildContext context) {
     List data = [];
@@ -25,17 +48,16 @@ class _ManageBillsScreenState extends State<ManageBillsScreen> {
           child: Column(
             children: [
               const MyAppBar(title: "Bills"),
-              StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection("Bills")
-                      .snapshots(),
+              FutureBuilder(
+                  future: BillDatabase().readBillData(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       data.clear();
                       final bills =
-                          snapshot.data?.docs.reversed.toList();
-                      for (var bill in bills!) {
-                        data.add(bill);
+                          snapshot.data!;
+                      for (var bill in bills) {
+                        var singleBill = getSingleBill(bill);
+                        data.add(singleBill);
                       }
                     }
                     if (data.isEmpty) {
@@ -50,13 +72,15 @@ class _ManageBillsScreenState extends State<ManageBillsScreen> {
                         itemBuilder: (context, index) {
                           var bill = data[index];
                           List<Map<String, String>> billDetails = [];
-                          for(int i = 0; i <bill["billDetails"].length; i++){
+                          double total = 0;
+                          for(int i = 0; i <bill["services"].length; i++){
                             billDetails.add(
                               {
-                                'service' : bill["billDetails"][i]['service'],
-                                'charges' : bill["billDetails"][i]['charges'],
+                                'service' : bill["services"][i]['service'],
+                                'charges' : bill["services"][i]['charges'],
                               }
                             );
+                            total += bill['services'][i]['charges'];
                           }
                           return Card(
                             margin: const EdgeInsets.all(7),
@@ -68,14 +92,14 @@ class _ManageBillsScreenState extends State<ManageBillsScreen> {
                               onTap: () async {
                                 await requestPermission(Permission.storage);
                                 createBill(
-                                  total: bill["total"], 
-                                  doctorID: bill["doctorID"], 
-                                  patName: bill["patName"], 
-                                  patAge: bill["patAge"], 
-                                  patGender: bill["patGender"], 
-                                  patPhone: bill["patPhone"], 
-                                  date: bill["date"].toString(), 
-                                  time: bill["time"], 
+                                  total: total, 
+                                  doctorID: bill["doctor_id"], 
+                                  patName: bill["patient_name"], 
+                                  patAge: bill["age"].toString(), 
+                                  patGender: bill["gender"], 
+                                  patPhone: bill["patient_phone_number"], 
+                                  date: bill["bill_date"].toString(), 
+                                  time: bill["bill_time"], 
                                   billDetails: billDetails,
                                 );
                               },

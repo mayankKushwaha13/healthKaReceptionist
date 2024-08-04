@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:receptionist/constants/colors.dart';
+import 'package:receptionist/screens/home_screen.dart';
 import 'package:receptionist/screens/login_screen.dart';
 
 import 'dart:async';
 
 import 'package:receptionist/widgets/customWidgets.dart';
+
+import '../data/shared_preferences.dart';
 
 
 class SplashScreen extends StatefulWidget {
@@ -18,10 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(milliseconds: 3550), () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => LoginScreen())); // Replace HomeScreen with your main screen
-    });
+    checkLogin();
   }
 
   @override
@@ -52,4 +52,25 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
+  void checkLogin()async{
+    bool? isLoggedIn = SP.sp!.getBool(SP.login);
+
+    Timer(const Duration(milliseconds: 3550), () {
+      if(isLoggedIn != null){
+        if(isLoggedIn){
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const HomeScreen()));
+        }
+        else{
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const LoginScreen()));
+        }
+      }
+      else{
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const LoginScreen()));
+      }
+    });
+  }
+
 }

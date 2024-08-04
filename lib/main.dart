@@ -1,14 +1,14 @@
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:receptionist/firebase_options.dart';
 import 'package:receptionist/screens/splash_screen.dart';
+
+import 'data/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await SP.init();
+
   runApp(const MainApp());
 }
 
