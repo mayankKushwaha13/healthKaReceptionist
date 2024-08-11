@@ -1,17 +1,16 @@
 
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:receptionist/constants/API/receptionist.dart';
 import 'package:receptionist/constants/colors.dart';
 import 'package:receptionist/constants/permission.dart';
-import 'package:receptionist/data/bill_database.dart';
-import 'package:receptionist/models/bill.dart';
+import 'package:receptionist/functions/get_bills.dart';
 import 'package:receptionist/screens/print_bill_screen.dart';
+import 'package:receptionist/widgets/appDrawerWidget.dart';
 import 'package:receptionist/widgets/customWidgets.dart';
-import 'package:http/http.dart' as http;
+
+import '../functions/get_single_bill.dart';
 
 class ManageBillsScreen extends StatefulWidget {
   const ManageBillsScreen({super.key});
@@ -22,44 +21,21 @@ class ManageBillsScreen extends StatefulWidget {
 }
 
 class _ManageBillsScreenState extends State<ManageBillsScreen> {
-  getSingleBill(Bill bill) async {
-    var response = await http.post(
-      Uri.parse("$recepAPI/single_bill_data_mobile"),
-      headers: {
-        'Content-type' : 'application/json',
-        'Accept' : 'application/json'
-      },
-      body: jsonEncode({
-        'doctor_id' : bill.doctorID,
-        'clinic_id' : bill.clinicID,
-        'invoice' : bill.invoice
-      })
-    );
-    var result = jsonDecode(response.body)['data'];
-    result.add(jsonDecode(response.body)['doctor_data']);
-    return result;
-  }
+  
   @override
   Widget build(BuildContext context) {
-    List data = [];
+    getBills();
     return SafeArea(
       child: Scaffold(
+        drawer: const AppDrawer(),
         body: SingleChildScrollView(
           child: Column(
             children: [
               const MyAppBar(title: "Bills"),
               FutureBuilder(
-                  future: BillDatabase().readBillData(),
+                  future: assignSingleBill(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      data.clear();
-                      final bills =
-                          snapshot.data!;
-                      for (var bill in bills) {
-                        var singleBill = getSingleBill(bill);
-                        data.add(singleBill);
-                      }
-                    }
                     if (data.isEmpty) {
                       return const Center(
                         child: Text("No Bills"),
@@ -71,16 +47,17 @@ class _ManageBillsScreenState extends State<ManageBillsScreen> {
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           var bill = data[index];
+                          bill = bill[0];
                           List<Map<String, String>> billDetails = [];
                           double total = 0;
                           for(int i = 0; i <bill["services"].length; i++){
                             billDetails.add(
                               {
-                                'service' : bill["services"][i]['service'],
-                                'charges' : bill["services"][i]['charges'],
+                                'service' : bill["services"][i]['service_name'],
+                                'charges' : bill["services"][i]['service_charge'].toString(),
                               }
                             );
-                            total += bill['services'][i]['charges'];
+                            total += bill['services'][i]['service_charge'];
                           }
                           return Card(
                             margin: const EdgeInsets.all(7),
@@ -118,7 +95,7 @@ class _ManageBillsScreenState extends State<ManageBillsScreen> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            "Patient : " + bill["patName"],
+                                            "Patient : " + bill["patient_name"],
                                             style: GoogleFonts.aBeeZee(
                                               color: MyColors.DarkSienna,
                                               fontSize: 20,
@@ -144,7 +121,7 @@ class _ManageBillsScreenState extends State<ManageBillsScreen> {
                                           ),
                                           
                                           Text(
-                                            bill["date"],
+                                            bill["bill_date"],
                                             style: GoogleFonts.aBeeZee(
                                               color: MyColors.Burgundy,
                                               fontSize: 18,
@@ -169,7 +146,7 @@ class _ManageBillsScreenState extends State<ManageBillsScreen> {
                                             ),
                                           ),
                                           Text(
-                                            bill["time"],
+                                            bill["bill_time"],
                                             style: GoogleFonts.aBeeZee(
                                               color: MyColors.Burgundy,
                                               fontSize: 18,
@@ -194,7 +171,7 @@ class _ManageBillsScreenState extends State<ManageBillsScreen> {
                                             ),
                                           ),
                                           Text(
-                                            bill["total"].toString(),
+                                            total.toString(),
                                             style: GoogleFonts.aBeeZee(
                                               color: MyColors.Burgundy,
                                               fontSize: 18,
@@ -228,7 +205,7 @@ class _ManageBillsScreenState extends State<ManageBillsScreen> {
                                                           fontSize: 16,
                                                         )),
                                                     TextSpan(
-                                                        text: bill["patPhone"])
+                                                        text: bill["patient_phone_number"])
                                                   ])),
                                             ],
                                           )
@@ -240,7 +217,12 @@ class _ManageBillsScreenState extends State<ManageBillsScreen> {
                               ),
                             ),
                           );
-                        });
+                        });}
+                        else{
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
                   }),
             ],
           ),

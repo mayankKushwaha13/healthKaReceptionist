@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:receptionist/constants/colors.dart';
 import 'package:receptionist/constants/permission.dart';
+import 'package:receptionist/functions/create_bill.dart';
 import 'package:receptionist/screens/print_bill_screen.dart';
 import 'package:receptionist/widgets/appDrawerWidget.dart';
 import 'package:receptionist/widgets/billServiceFieldWidget.dart';
@@ -16,9 +16,11 @@ class BillingScreen extends StatefulWidget {
   final String date;
   final String time;
   final String docID;
+  final String patID;
 
   const BillingScreen(
       {super.key,
+      required this.patID,
       required this.patName,
       required this.patAge,
       required this.patGender,
@@ -32,6 +34,7 @@ class BillingScreen extends StatefulWidget {
 }
 
 class _BillingScreenState extends State<BillingScreen> {
+  List<dynamic> services = [];
   final _formKey = GlobalKey<FormState>();
   final List<TextEditingController> _serviceTypeControllers = [
     TextEditingController()
@@ -74,11 +77,10 @@ class _BillingScreenState extends State<BillingScreen> {
     }
   }
 
-  
-
   void _printBill() async {
     if (_formKey.currentState!.validate()) {
       _billDetails.clear();
+      services.clear();
       double total = 0;
       for (int i = 0; i < _serviceTypeControllers.length; i++) {
         double charge = double.tryParse(_chargesControllers[i].text) ?? 0;
@@ -87,22 +89,24 @@ class _BillingScreenState extends State<BillingScreen> {
           'service': _serviceTypeControllers[i].text,
           'charges': _chargesControllers[i].text,
         });
+        services.add({
+          'service_name': _serviceTypeControllers[i].text,
+          'service_charge': double.parse(_chargesControllers[i].text)
+        });
       }
       await requestPermission(Permission.storage);
       setState(() {
-        CollectionReference collRef2 =
-            FirebaseFirestore.instance.collection("Bills");
-        collRef2.add({
-          "total": total,
-          "doctorID": widget.docID,
-          "date": widget.date,
-          "patAge": widget.patAge,
-          "patGender": widget.patGender,
-          "patName": widget.patName,
-          "patPhone": widget.patPhone,
-          "time": widget.time,
-          "billDetails": _billDetails
-        });
+        createBillsAPI(
+            context: context,
+            gender: widget.patGender,
+            phone: widget.patPhone,
+            name: widget.patName,
+            patID: widget.patID,
+            docID: widget.docID,
+            billDate: widget.date,
+            billTime: widget.time,
+            age: int.parse(widget.patAge),
+            services: services);
       });
       createBill(
           total: total,
@@ -113,8 +117,7 @@ class _BillingScreenState extends State<BillingScreen> {
           patName: widget.patName,
           patPhone: widget.patPhone,
           time: widget.time,
-          billDetails: _billDetails
-          );
+          billDetails: _billDetails);
     }
   }
 

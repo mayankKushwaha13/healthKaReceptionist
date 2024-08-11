@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:receptionist/constants/API/receptionist.dart';
 
 createAppointments({
+  required BuildContext context,
   required String patientID,
   required String patientName,
   required String phoneNumber,
@@ -37,7 +39,11 @@ createAppointments({
       }));
 
   if(response.statusCode == 200){
-    print("Appointment Created");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Appointment Saved")
+      )
+    );
     print(response.body);
   }
   else{

@@ -40,6 +40,9 @@ class _PatientListScreenState extends State<PatientListScreen> {
                   builder: (context, snapshot) {
                     if(snapshot.hasData){
                     List<Bill> bills = snapshot.data!;
+                    bills = bills.where(
+                      (e) => e.doctorID == widget.doctorID
+                    ).toList();
                     List<Patient?> patients = bills.map(
                       (e) {
                         if (e.doctorID == widget.doctorID) {
@@ -54,10 +57,10 @@ class _PatientListScreenState extends State<PatientListScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Column(
                         children: [
-                          patients.first == null ? const Text("Nothing to see here."): ListView.builder(
+                          bills.first == null ? const Text("Nothing to see here."): ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount: patients.length,
+                              itemCount: bills.length,
                               itemBuilder: (context, index) {
                                 final patient = patients[index];
                                 return Card(
@@ -95,7 +98,7 @@ class _PatientListScreenState extends State<PatientListScreen> {
                                                   ),
                                                   children: [
                                                     TextSpan(
-                                                        text: patient.name,
+                                                        text: patient.name ?? "",
                                                         style:
                                                             GoogleFonts.aBeeZee(
                                                           fontSize: 20,

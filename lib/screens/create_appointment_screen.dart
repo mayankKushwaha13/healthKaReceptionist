@@ -6,6 +6,7 @@ import 'package:receptionist/data/shared_preferences.dart';
 import 'package:receptionist/functions/create_appointments.dart';
 import 'package:receptionist/functions/get_doctors.dart';
 import 'package:receptionist/screens/billing_screen.dart';
+import 'package:receptionist/widgets/appDrawerWidget.dart';
 import 'package:receptionist/widgets/assignTextFieldNumberWidget.dart';
 import 'package:receptionist/widgets/assignTextFieldWidget.dart';
 import 'package:receptionist/widgets/customWidgets.dart';
@@ -50,6 +51,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
     // final width = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
+        drawer: const AppDrawer(),
         backgroundColor: MyColors.Seashell,
         body: SingleChildScrollView(
           child: GestureDetector(
@@ -411,8 +413,10 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                         onTap: () {
                           if (_formKey.currentState!.validate() &&
                               _formKey2.currentState!.validate()) {
+                            
                             setState(() {
                               createAppointments(
+                                context: context,
                                   patientID: patID.text,
                                   patientName: patName.text,
                                   phoneNumber: phNum.text,
@@ -457,6 +461,7 @@ class _CreateAppointmentScreenState extends State<CreateAppointmentScreen> {
                               _formKey2.currentState!.validate()) {
                             Get.to(
                                 () => BillingScreen(
+                                      patID: patID.text,
                                       patName: patName.text,
                                       patAge: age.text,
                                       patPhone: phNum.text,
