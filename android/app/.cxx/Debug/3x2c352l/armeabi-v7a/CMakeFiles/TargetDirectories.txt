@@ -1,0 +1,2 @@
+E:/Applications/healthKa Intern/receptionist/android/app/.cxx/Debug/3x2c352l/armeabi-v7a/CMakeFiles/edit_cache.dir
+E:/Applications/healthKa Intern/receptionist/android/app/.cxx/Debug/3x2c352l/armeabi-v7a/CMakeFiles/rebuild_cache.dir
